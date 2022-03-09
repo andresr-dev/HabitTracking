@@ -22,26 +22,50 @@ struct DeveloperPreview {
         title: "Learn Piano",
         description: "Study piano for 1 hour daily",
         iconName: ActivityIcon.piano.rawValue,
-        colorSelected: .purple
+        colorSelected: .purple,
+        dailyGoal: 60,
+        dailyData: [
+            Date().addingTimeInterval(-6*24*60*60): 50,
+            Date().addingTimeInterval(-5*24*60*60): 45,
+            Date().addingTimeInterval(-4*24*60*60): 60,
+            Date().addingTimeInterval(-3*24*60*60): 70,
+            Date().addingTimeInterval(-2*24*60*60): 90,
+            Date().addingTimeInterval(-1*24*60*60): 40,
+            Date(): 65
+        ]
     )
     let activities = [
         Activity(
             title: "Walk",
             description: "Walk every day for 1 hour",
             iconName: ActivityIcon.walk.rawValue,
-            colorSelected: .green
+            colorSelected: .green,
+            dailyGoal: 120,
+            dailyData: [:]
         ),
         Activity(
             title: "Learn Piano",
             description: "Study piano for 1 hour daily",
             iconName: ActivityIcon.piano.rawValue,
-            colorSelected: .purple
+            colorSelected: .purple,
+            dailyGoal: 60,
+            dailyData: [
+                Date().addingTimeInterval(-6*24*60*60): 30,
+                Date().addingTimeInterval(-5*24*60*60): 40,
+                Date().addingTimeInterval(-4*24*60*60): 20,
+                Date().addingTimeInterval(-3*24*60*60): 60,
+                Date().addingTimeInterval(-2*24*60*60): 50,
+                Date().addingTimeInterval(-1*24*60*60): 120,
+                Date(): 80
+            ]
         ),
         Activity(
             title: "Learn Programing",
             description: "Study programing for 3 hours daily",
             iconName: ActivityIcon.brain.rawValue,
-            colorSelected: .orange
+            colorSelected: .orange,
+            dailyGoal: 180,
+            dailyData: [:]
         )
     ]
 }

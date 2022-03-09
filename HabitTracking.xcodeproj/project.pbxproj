@@ -18,6 +18,7 @@
 		818A092627D80B06003558FC /* IconPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 818A092527D80B06003558FC /* IconPickerView.swift */; };
 		818A092D27D8FF1A003558FC /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 818A092C27D8FF1A003558FC /* DetailView.swift */; };
 		818A093027D8FF84003558FC /* PreviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 818A092F27D8FF84003558FC /* PreviewProvider.swift */; };
+		818A093227D94EF8003558FC /* ChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 818A093127D94EF8003558FC /* ChartView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +34,7 @@
 		818A092527D80B06003558FC /* IconPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconPickerView.swift; sourceTree = "<group>"; };
 		818A092C27D8FF1A003558FC /* DetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
 		818A092F27D8FF84003558FC /* PreviewProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewProvider.swift; sourceTree = "<group>"; };
+		818A093127D94EF8003558FC /* ChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -140,6 +142,7 @@
 			isa = PBXGroup;
 			children = (
 				818A092C27D8FF1A003558FC /* DetailView.swift */,
+				818A093127D94EF8003558FC /* ChartView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -225,6 +228,7 @@
 				818A092227D7FC41003558FC /* ActivityRow.swift in Sources */,
 				818A092D27D8FF1A003558FC /* DetailView.swift in Sources */,
 				818A091D27D7FAD7003558FC /* ActivitiesModel.swift in Sources */,
+				818A093227D94EF8003558FC /* ChartView.swift in Sources */,
 				818A090F27D7F8F0003558FC /* ActivitiesListView.swift in Sources */,
 				818A092627D80B06003558FC /* IconPickerView.swift in Sources */,
 				818A092427D7FDA2003558FC /* AddActivityView.swift in Sources */,

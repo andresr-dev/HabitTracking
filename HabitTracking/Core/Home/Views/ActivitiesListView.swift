@@ -22,14 +22,16 @@ struct ActivitiesListView: View {
                     }
                     .listRowInsets(.init(top: 12, leading: 15, bottom: 12, trailing: 12))
                 }
+                .onDelete(perform: vm.delete)
+                .onMove(perform: vm.move)
             }
             .navigationTitle("Activities")
             .toolbar {
-                Button {
-                    showAddActivity = true
-                } label: {
-                    Image(systemName: "plus")
-                        .font(.title3.weight(.semibold))
+                ToolbarItem(placement: .navigationBarLeading) {
+                    EditButton()
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    addButton
                 }
             }
             .fullScreenCover(isPresented: $showAddActivity) {
@@ -42,5 +44,16 @@ struct ActivitiesListView: View {
 struct ActivitiesListView_Previews: PreviewProvider {
     static var previews: some View {
         ActivitiesListView()
+    }
+}
+
+extension ActivitiesListView {
+    private var addButton: some View {
+        Button {
+            showAddActivity = true
+        } label: {
+            Image(systemName: "plus")
+                .font(.title3)
+        }
     }
 }

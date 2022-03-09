@@ -14,6 +14,8 @@ struct Activity: Identifiable {
     let description: String
     let iconName: String
     let colorSelected: Color
+    let dailyGoal: Int
+    let dailyData: [Date:Int]
 }
 
 enum ActivityIcon: String, CaseIterable {

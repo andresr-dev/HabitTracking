@@ -13,7 +13,7 @@ struct ActivityRow: View {
     var body: some View {
         HStack(spacing: 8) {
             Image(systemName: activity.iconName)
-                .font(.system(size: 42, weight: .semibold, design: .default))
+                .font(.system(size: 40, weight: .light, design: .default))
                 .foregroundColor(activity.colorSelected)
             
             VStack(alignment: .leading, spacing: 3) {
@@ -31,6 +31,6 @@ struct ActivityRow: View {
 
 struct ActivityRow_Previews: PreviewProvider {
     static var previews: some View {
-        ActivityRow(activity: Activity(title: "Learn Piano", description: "Attend daily lessons", iconName: "pianokeys.inverse", colorSelected: .green))
+        ActivityRow(activity: dev.activity)
     }
 }
