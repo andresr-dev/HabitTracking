@@ -9,9 +9,17 @@ import SwiftUI
 
 @main
 struct HabitTrackingApp: App {
+    
+    init() {
+        let appearance = UINavigationBarAppearance()
+        appearance.backgroundColor = UIColor.clear
+        
+        UINavigationBar.appearance().compactAppearance = appearance
+    }
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ActivitiesListView()
         }
     }
 }
