@@ -14,12 +14,15 @@ struct ActivitiesListView: View {
     var body: some View {
         NavigationView {
             List {
-                ForEach(vm.activities) {
-                    ActivityRow(activity: $0)
-                        .listRowInsets(.init(top: 12, leading: 15, bottom: 12, trailing: 12))
+                ForEach(vm.activities) { activity in
+                    NavigationLink {
+                        DetailView(activity: activity)
+                    } label: {
+                        ActivityRow(activity: activity)
+                    }
+                    .listRowInsets(.init(top: 12, leading: 15, bottom: 12, trailing: 12))
                 }
             }
-            .padding(.top, 10)
             .navigationTitle("Activities")
             .toolbar {
                 Button {

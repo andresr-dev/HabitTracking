@@ -23,6 +23,7 @@ struct ActivityRow: View {
                 Text(activity.description)
                     .font(.callout)
                     .foregroundColor(.secondary)
+                    .lineLimit(1)
             }
         }
     }

@@ -24,12 +24,11 @@ struct AddActivityView: View {
     var body: some View {
         NavigationView {
             Form {
-                TextField("Title here...", text: $title)
+                TextField("Title...", text: $title)
                     .font(.title3.weight(.semibold))
                     .padding(.vertical, 10)
                 
-                TextField("Description here...", text: $description)
-                    .lineLimit(nil)
+                TextField("Description...", text: $description)
                     .padding(.vertical, 10)
                 
                 NavigationLink {

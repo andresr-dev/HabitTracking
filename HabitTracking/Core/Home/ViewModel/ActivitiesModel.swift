@@ -10,8 +10,7 @@ import Foundation
 final class ActivitiesModel: ObservableObject {
     @Published var activities = [Activity]()
     
-    
-    func addNewItem(title: String, description: String) {
-        
+    init() {
+        activities = DeveloperPreview.instance.activities
     }
 }
