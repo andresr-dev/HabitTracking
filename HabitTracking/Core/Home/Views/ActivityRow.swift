@@ -14,7 +14,7 @@ struct ActivityRow: View {
         HStack(spacing: 8) {
             Image(systemName: activity.iconName)
                 .font(.system(size: 40, weight: .light, design: .default))
-                .foregroundColor(activity.colorSelected)
+                .foregroundColor(activity.iconColor)
             
             VStack(alignment: .leading, spacing: 3) {
                 Text(activity.title)

@@ -22,9 +22,9 @@ struct DeveloperPreview {
         title: "Learn Piano",
         description: "Study piano for 1 hour daily",
         iconName: ActivityIcon.piano.rawValue,
-        colorSelected: .purple,
-        dailyGoal: 60,
-        dailyData: [
+        iconColor: .purple,
+        goal: 60,
+        data: [
             Date().addingTimeInterval(-6*24*60*60): 50,
             Date().addingTimeInterval(-5*24*60*60): 45,
             Date().addingTimeInterval(-4*24*60*60): 60,
@@ -39,17 +39,17 @@ struct DeveloperPreview {
             title: "Walk",
             description: "Walk every day for 1 hour",
             iconName: ActivityIcon.walk.rawValue,
-            colorSelected: .green,
-            dailyGoal: 120,
-            dailyData: [:]
+            iconColor: .green,
+            goal: 120,
+            data: [Date():45]
         ),
         Activity(
             title: "Learn Piano",
             description: "Study piano for 1 hour daily",
             iconName: ActivityIcon.piano.rawValue,
-            colorSelected: .purple,
-            dailyGoal: 60,
-            dailyData: [
+            iconColor: .purple,
+            goal: 70,
+            data: [
                 Date().addingTimeInterval(-6*24*60*60): 30,
                 Date().addingTimeInterval(-5*24*60*60): 40,
                 Date().addingTimeInterval(-4*24*60*60): 20,
@@ -63,9 +63,9 @@ struct DeveloperPreview {
             title: "Learn Programing",
             description: "Study programing for 3 hours daily",
             iconName: ActivityIcon.brain.rawValue,
-            colorSelected: .orange,
-            dailyGoal: 180,
-            dailyData: [:]
+            iconColor: .orange,
+            goal: 180,
+            data: [:]
         )
     ]
 }

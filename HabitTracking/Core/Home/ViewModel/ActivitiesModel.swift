@@ -20,9 +20,9 @@ final class ActivitiesModel: ObservableObject {
             title: title,
             description: description,
             iconName: iconName,
-            colorSelected: colorSelected,
-            dailyGoal: goal,
-            dailyData: [:]
+            iconColor: colorSelected,
+            goal: goal,
+            data: [:]
         )
         withAnimation {
             activities.append(newActivity)
