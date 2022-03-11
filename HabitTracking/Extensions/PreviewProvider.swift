@@ -41,7 +41,7 @@ struct DeveloperPreview {
             iconName: ActivityIcon.walk.rawValue,
             iconColor: .green,
             goal: 120,
-            data: [Date():45]
+            data: [Date.now:45]
         ),
         Activity(
             title: "Learn Piano",
@@ -64,8 +64,12 @@ struct DeveloperPreview {
             description: "Study programing for 3 hours daily",
             iconName: ActivityIcon.brain.rawValue,
             iconColor: .orange,
-            goal: 180,
-            data: [:]
+            goal: 60,
+            data: [
+                Date().addingTimeInterval(-4*24*60*60): 60,
+                Date().addingTimeInterval(-3*24*60*60): 95,
+                Date().addingTimeInterval(-2*24*60*60): 50
+            ]
         )
     ]
 }

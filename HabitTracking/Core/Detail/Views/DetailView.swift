@@ -9,20 +9,18 @@ import SwiftUI
 
 struct DetailView: View {
     let activity: Activity
+    @State private var average = 0
     
     var body: some View {
         VStack(alignment: .leading, spacing: 30) {
             Text(activity.description)
-            
-//            Text("Performance:")
-//                .font(.title3.weight(.semibold))
-            
-            ChartView(activity: activity)
-            
+            ChartView(activity: activity, average: $average)
+            Text("Your average this week is \(average) min")
+                .font(.headline.weight(.medium))
+                .foregroundColor(.primary)
             Spacer()
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-            .padding()
             .navigationTitle(activity.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
