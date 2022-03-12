@@ -20,6 +20,7 @@
 		818A093027D8FF84003558FC /* PreviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 818A092F27D8FF84003558FC /* PreviewProvider.swift */; };
 		818A093227D94EF8003558FC /* ChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 818A093127D94EF8003558FC /* ChartView.swift */; };
 		818A093427DBA4F7003558FC /* tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 818A093327DBA4F7003558FC /* tests.swift */; };
+		818A093627DC27A8003558FC /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 818A093527DC27A8003558FC /* Date.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +38,7 @@
 		818A092F27D8FF84003558FC /* PreviewProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewProvider.swift; sourceTree = "<group>"; };
 		818A093127D94EF8003558FC /* ChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartView.swift; sourceTree = "<group>"; };
 		818A093327DBA4F7003558FC /* tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tests.swift; sourceTree = "<group>"; };
+		818A093527DC27A8003558FC /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -154,6 +156,7 @@
 			isa = PBXGroup;
 			children = (
 				818A092F27D8FF84003558FC /* PreviewProvider.swift */,
+				818A093527DC27A8003558FC /* Date.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -235,6 +238,7 @@
 				818A090F27D7F8F0003558FC /* ActivitiesListView.swift in Sources */,
 				818A092627D80B06003558FC /* IconPickerView.swift in Sources */,
 				818A092427D7FDA2003558FC /* AddActivityView.swift in Sources */,
+				818A093627DC27A8003558FC /* Date.swift in Sources */,
 				818A092027D7FAF1003558FC /* Activity.swift in Sources */,
 				818A093027D8FF84003558FC /* PreviewProvider.swift in Sources */,
 				818A093427DBA4F7003558FC /* tests.swift in Sources */,

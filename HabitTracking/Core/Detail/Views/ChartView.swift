@@ -10,22 +10,18 @@ import SwiftUI
 struct ChartView: View {
     let activity: Activity
     let goal: Int
-    @State private var data: [Date: Int] = [:]
-    @State private var dataDatesSorted: [Date] = []
-    @State private var minDate = Date()
-    @State private var maxDate = Date()
+    let today: Int
+    var datesOfWeek = [Date]()
+    var weekdays = [String]()
+    
+    @State private var dataOfWeek = [String: Int]()
+    
     @State private var maxY = 0
     @State private var chartColor = Color.primary
     @State private var animateChart = false
     @State private var geoWidth: CGFloat = 0
-    @State private var weekdays = [Date]()
-    @Binding var average: Int
     
-    init(activity: Activity, average: Binding<Int>) {
-        self.activity = activity
-        goal = activity.goal
-        self._average = average
-    }
+    @Binding var average: Int
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -49,6 +45,22 @@ struct ChartView: View {
             setInitialValues()
         }
     }
+    init(activity: Activity, average: Binding<Int>) {
+        self.activity = activity
+        goal = activity.goal
+        self._average = average
+        today = Calendar.current.dateComponents([.day], from: Date.now).day ?? 0
+        
+        let firstDayChart = Calendar.current.date(byAdding: .day, value: -6, to: Date.now) ?? Date.now
+        
+        for i in 0..<7 {
+            datesOfWeek.append(Calendar.current.date(byAdding: .day, value: i, to: firstDayChart) ?? Date.now)
+        }
+        
+        for date in datesOfWeek {
+            weekdays.append(date.formatted(.dateTime.weekday()))
+        }
+    }
 }
 
 struct ChartView_Previews: PreviewProvider {
@@ -62,24 +74,38 @@ extension ChartView {
     private var chartView: some View {
         GeometryReader { geo in
             Path { path in
+                
+                let firstDataDate = activity.data.keys.min() ?? Date.now
+                let firstDataDay = Calendar.current.dateComponents([.day], from: firstDataDate).day ?? 0
+                
+                let firstChartDay = Calendar.current.dateComponents([.day], from: datesOfWeek.first ?? Date.now).day ?? 0
+                
+                print("first data day: \(firstDataDay)")
+                print("first date day: \(firstChartDay)")
+                
                 for index in weekdays.indices {
-                    let yValue = data[weekdays[index], default: 0]
-                    let yPosition = (1 - CGFloat(yValue) / CGFloat(maxY)) * geo.size.height
-                    
-                    if index == 0 {
-                        path.move(to: CGPoint(x: 0, y: yPosition))
-                    }
+                    let yValue = dataOfWeek[weekdays[index], default: 0]
                     
                     let xPosition = (geo.size.width / CGFloat(weekdays.count - 1)) * CGFloat(index)
-                    if index < data.count {
+                    
+                    let yPosition = (1 - CGFloat(yValue) / CGFloat(maxY)) * geo.size.height
+                    
+                    let chartDay = Calendar.current.dateComponents([.day], from: datesOfWeek[index]).day ?? 0
+                    
+                    if chartDay == firstDataDay || firstChartDay > firstDataDay {
+                        path.move(to: CGPoint(x: xPosition, y: yPosition))
+                    }
+                    if chartDay >= firstDataDay && chartDay <= today {
                         path.addLine(to: CGPoint(x: xPosition, y: yPosition))
                     }
                 }
+                print("days of week: \(weekdays)")
+                print("data of week: \(dataOfWeek)")
             }
             .trim(from: 0, to: animateChart ? 1.0 : 0.0)
             .stroke(chartColor,
                     style: .init(
-                        lineWidth: data.count > 1 ? 2.5 : 5,
+                        lineWidth: dataOfWeek.count > 1 ? 2.5 : 5,
                         lineCap: .round,
                         lineJoin: .round)
             )
@@ -132,7 +158,7 @@ extension ChartView {
     private var xAxisLabels: some View {
         HStack {
             ForEach(weekdays, id: \.self) {
-                Text($0, format: .dateTime.weekday())
+                Text($0)
                 if $0 != weekdays.last {
                     Spacer(minLength: 0)
                 }
@@ -157,60 +183,59 @@ extension ChartView {
 // MARK: - Functions
 extension ChartView {
     private func setInitialValues() {
-        data = activity.data
-        let dates = [Date](data.keys)
-        dataDatesSorted = dates.sorted()
+        let data = activity.data.filter { $0.key >= datesOfWeek.first ?? Date.now }
         
-        var maxValue = 0
-        var total = 0
-        var numberOfValues = 0
+        // Create two arrays, one with the dates sorted and other with its values
+        var datesOfWeekFromData = data.map({ $0.key }).sorted()
         
-        if dataDatesSorted.count > 0 {
-            if dataDatesSorted.count <= 7 {
-                for index in dataDatesSorted.indices {
-                    weekdays.append(dataDatesSorted[index])
-                }
-                if weekdays.count < 7 {
-                    for _ in weekdays.count..<7 {
-                        let lastDate = weekdays.last ?? Date.now
-                        weekdays.append(lastDate.addingTimeInterval(24*60*60))
-                    }
-                }
-                maxValue = data.values.max() ?? 0
-                total = data.values.reduce(0, +)
-                numberOfValues = data.count
-            } else {
-                // There's more than 7 days in data
-                let firstDataDateIndex = dataDatesSorted.count - 8
-                let lastDataDateIndex = dataDatesSorted.count - 1
-                total = 0
-                for index in firstDataDateIndex...lastDataDateIndex {
-                    weekdays.append(dataDatesSorted[index])
-                    total += data[dataDatesSorted[index]] ?? 0
-                }
-                total = weekdays.count
-                let filteredData = data.filter { $0.key >= weekdays.first ?? Date.now }
-                maxValue = filteredData.values.max() ?? 0
-                numberOfValues = filteredData.count
+        if datesOfWeekFromData.count > 0 {
+            print("dates of week from data: \(datesOfWeekFromData)")
+            
+            var lastDayOfWeekFromData = Calendar.current.dateComponents([.day], from: datesOfWeekFromData.last ?? Date.now).day ?? 0
+            
+            while today > lastDayOfWeekFromData {
+                datesOfWeekFromData.append(Calendar.current.date(byAdding: .day, value: 1, to: datesOfWeekFromData.last ?? Date.now) ?? Date.now)
+               
+                lastDayOfWeekFromData = Calendar.current.dateComponents([.day], from: datesOfWeekFromData.last ?? Date.now).day ?? 0
             }
-        } else {
-            for i in 0..<7 {
-                weekdays.append(Date.now.addingTimeInterval(TimeInterval(i*24*60*60)))
-            }
+            print("dates of week from data until today: \(datesOfWeekFromData)")
         }
+        
+        var valuesOfWeek = [Int]()
+        for date in datesOfWeekFromData {
+            valuesOfWeek.append(data[date, default: 0])
+        }
+        
+        // Convert dates sorted to its respective weekday string
+        var weekdaysFromData = [String]()
+        for date in datesOfWeekFromData {
+            weekdaysFromData.append(date.formatted(.dateTime.weekday()))
+        }
+        
+        // Mix weekdays and values to fill dataOfWeek
+        for index in weekdaysFromData.indices {
+            dataOfWeek[weekdaysFromData[index]] = valuesOfWeek[index]
+        }
+        print("data of week: \(dataOfWeek)")
+        
+        // Calculate average
+        let maxValue = valuesOfWeek.max() ?? 0
+        let total = valuesOfWeek.reduce(0, +)
+        let numberOfValues = valuesOfWeek.count
+        
         maxY = maxValue > goal ? maxValue : goal
         average = numberOfValues > 0 ? total / numberOfValues : 0
         
         let percentageAverage = Double(average) / Double(goal)
         if percentageAverage >= 1 {
             chartColor = .green
-        } else if percentageAverage >= 0.8 {
+        } else if percentageAverage > 0.7 {
             chartColor = .orange
         } else {
             chartColor = .red
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            withAnimation(.linear(duration: 1)) {
+            withAnimation(.linear(duration: dataOfWeek.count > 3 ? 1.5: 0.8)) {
                 animateChart = true
             }
         }

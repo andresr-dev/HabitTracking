@@ -50,13 +50,13 @@ struct DeveloperPreview {
             iconColor: .purple,
             goal: 70,
             data: [
-                Date().addingTimeInterval(-6*24*60*60): 30,
-                Date().addingTimeInterval(-5*24*60*60): 40,
-                Date().addingTimeInterval(-4*24*60*60): 20,
+                Date(): 30,
+                Date().addingTimeInterval(-24*60*60): 40,
+                Date().addingTimeInterval(-2*24*60*60): 20,
                 Date().addingTimeInterval(-3*24*60*60): 60,
-                Date().addingTimeInterval(-2*24*60*60): 50,
-                Date().addingTimeInterval(-1*24*60*60): 120,
-                Date(): 80
+                Date().addingTimeInterval(-4*24*60*60): 50,
+                Date().addingTimeInterval(-5*24*60*60): 120,
+                Date().addingTimeInterval(-6*24*60*60): 80
             ]
         ),
         Activity(

@@ -118,6 +118,12 @@ extension AddActivityView {
             showAlert = true
             return
         }
+        guard goal > 0 else {
+            alertTitle = "Invalid Goal!"
+            alertMessage = "Goal must be greater than 0 🙁"
+            showAlert = true
+            return
+        }
         vm.addNewActivity(
             title: trimmedTitle,
             description: trimmedDescription,
