@@ -10,7 +10,7 @@ import SwiftUI
 struct ChartView: View {
     let activity: Activity
     let goal: Int
-    let today: Int
+    let todayNumber: Int
     var datesOfWeek = [Date]()
     var weekdays = [String]()
     
@@ -20,21 +20,22 @@ struct ChartView: View {
     @State private var chartColor = Color.primary
     @State private var animateChart = false
     @State private var geoWidth: CGFloat = 0
+    @State private var geoHeight: CGFloat = 250
     
     @Binding var average: Int
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading) {
             HStack {
-                Spacer(minLength: 10)
+                Spacer(minLength: geoWidth / 18)
                 VStack {
-                    HStack {
+                    HStack(alignment: .bottom) {
                         chartView
+                            .frame(height: geoHeight)
                             .background(yAxisDividers)
-                            .frame(height: 250)
                         yAxisLabels
                     }
-                    .frame(height: 273)
+                    
                 }
             }
             xAxisLabels
@@ -49,14 +50,14 @@ struct ChartView: View {
         self.activity = activity
         goal = activity.goal
         self._average = average
-        today = Calendar.current.dateComponents([.day], from: Date.now).day ?? 0
+        todayNumber = Calendar.current.dateComponents([.day], from: Date.now).day ?? 0
         
-        let firstDayChart = Calendar.current.date(byAdding: .day, value: -6, to: Date.now) ?? Date.now
+        let firstDayChart = Calendar.current.date(byAdding: .day, value: -6, to: Date.now.startOfDay()) ?? Date.now
         
         for i in 0..<7 {
             datesOfWeek.append(Calendar.current.date(byAdding: .day, value: i, to: firstDayChart) ?? Date.now)
         }
-        
+        print("[😀] dates of week initializacion: \(datesOfWeek)")
         for date in datesOfWeek {
             weekdays.append(date.formatted(.dateTime.weekday()))
         }
@@ -65,7 +66,7 @@ struct ChartView: View {
 
 struct ChartView_Previews: PreviewProvider {
     static var previews: some View {
-        ChartView(activity: dev.activities[2], average: .constant(50))
+        ChartView(activity: dev.activities[1], average: .constant(50))
             .preferredColorScheme(.dark)
     }
 }
@@ -74,7 +75,6 @@ extension ChartView {
     private var chartView: some View {
         GeometryReader { geo in
             Path { path in
-                
                 let firstDataDate = activity.data.keys.min() ?? Date.now
                 let firstDataDay = Calendar.current.dateComponents([.day], from: firstDataDate).day ?? 0
                 
@@ -95,7 +95,7 @@ extension ChartView {
                     if chartDay == firstDataDay || firstChartDay > firstDataDay {
                         path.move(to: CGPoint(x: xPosition, y: yPosition))
                     }
-                    if chartDay >= firstDataDay && chartDay <= today {
+                    if chartDay >= firstDataDay && chartDay <= todayNumber {
                         path.addLine(to: CGPoint(x: xPosition, y: yPosition))
                     }
                 }
@@ -109,14 +109,16 @@ extension ChartView {
                         lineCap: .round,
                         lineJoin: .round)
             )
+            .onAppear {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    geoWidth = geo.size.width
+                }
+            }
             .background {
                 goalLine(geo: geo)
             }
             .background {
                 xAxisDividers(geo: geo)
-            }
-            .onAppear {
-                geoWidth = geo.size.width
             }
         }
     }
@@ -156,27 +158,36 @@ extension ChartView {
         .stroke(.blue, style: StrokeStyle(lineWidth: 1, lineCap: .round))
     }
     private var xAxisLabels: some View {
-        HStack {
+        HStack(spacing: 0) {
             ForEach(weekdays, id: \.self) {
                 Text($0)
+                    .frame(width: (geoWidth / 9))
                 if $0 != weekdays.last {
                     Spacer(minLength: 0)
                 }
             }
         }
-        .frame(width: geoWidth + 8)
+        .frame(width: geoWidth + (geoWidth / 18))
     }
     private var yAxisLabels: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 0) {
             Text("\(maxY)")
-            Spacer()
+                .frame(height: geoHeight / 6)
+            
+            Spacer(minLength: 0)
+            
             Text("\(maxY * 2 / 3)")
-                .offset(y: -6)
-            Spacer()
+                .frame(height: geoHeight / 6)
+            
+            Spacer(minLength: 0)
+            
             Text("\(maxY / 3)")
-                .offset(y: -12)
-            Spacer()
+                .frame(height: geoHeight / 6)
+            
+            Spacer(minLength: 0)
         }
+        .frame(height: geoHeight)
+        .offset(y: -(geoHeight / 12))
     }
 }
 
@@ -193,7 +204,7 @@ extension ChartView {
             
             var lastDayOfWeekFromData = Calendar.current.dateComponents([.day], from: datesOfWeekFromData.last ?? Date.now).day ?? 0
             
-            while today > lastDayOfWeekFromData {
+            while todayNumber > lastDayOfWeekFromData {
                 datesOfWeekFromData.append(Calendar.current.date(byAdding: .day, value: 1, to: datesOfWeekFromData.last ?? Date.now) ?? Date.now)
                
                 lastDayOfWeekFromData = Calendar.current.dateComponents([.day], from: datesOfWeekFromData.last ?? Date.now).day ?? 0

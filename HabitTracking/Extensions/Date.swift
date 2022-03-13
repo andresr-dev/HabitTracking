@@ -22,6 +22,9 @@ extension Date {
     func weekdayString() -> String {
         self.formatted(.dateTime.weekday())
     }
+    func startOfDay() -> Date {
+        Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: self) ?? Date.now
+    }
 }
 
 
