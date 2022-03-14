@@ -68,7 +68,7 @@ struct DeveloperPreview {
             data: [
                 Date().addingTimeInterval(-4*24*60*60): 60,
                 Date().addingTimeInterval(-3*24*60*60): 95,
-                Date().addingTimeInterval(-2*24*60*60): 50
+                Date().addingTimeInterval(-2*24*60*60): 70
             ]
         )
     ]

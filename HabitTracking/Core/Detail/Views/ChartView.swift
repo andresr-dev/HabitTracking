@@ -9,7 +9,6 @@ import SwiftUI
 
 struct ChartView: View {
     let activity: Activity
-    let goal: Int
     let todayNumber: Int
     var datesOfWeek = [Date]()
     var weekdays = [String]()
@@ -20,7 +19,7 @@ struct ChartView: View {
     @State private var chartColor = Color.primary
     @State private var animateChart = false
     @State private var geoWidth: CGFloat = 0
-    @State private var geoHeight: CGFloat = 250
+    @State private var geoHeight: CGFloat = 230
     
     @Binding var average: Int
     
@@ -35,10 +34,10 @@ struct ChartView: View {
                             .background(yAxisDividers)
                         yAxisLabels
                     }
-                    
                 }
             }
             xAxisLabels
+            chartDetails
         }
         .font(.callout)
         .foregroundColor(.secondary)
@@ -48,7 +47,6 @@ struct ChartView: View {
     }
     init(activity: Activity, average: Binding<Int>) {
         self.activity = activity
-        goal = activity.goal
         self._average = average
         todayNumber = Calendar.current.dateComponents([.day], from: Date.now).day ?? 0
         
@@ -68,6 +66,7 @@ struct ChartView_Previews: PreviewProvider {
     static var previews: some View {
         ChartView(activity: dev.activities[1], average: .constant(50))
             .preferredColorScheme(.dark)
+.previewInterfaceOrientation(.portrait)
     }
 }
 
@@ -109,8 +108,10 @@ extension ChartView {
                         lineCap: .round,
                         lineJoin: .round)
             )
+            .shadow(color: chartColor.opacity(0.8), radius: 10, x: 0, y: 5)
+            .shadow(color: chartColor.opacity(0.3), radius: 10, x: 0, y: 5)
             .onAppear {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                     geoWidth = geo.size.width
                 }
             }
@@ -130,7 +131,7 @@ extension ChartView {
                 path.addLine(to: CGPoint(x: xPosition, y: 0))
             }
         }
-        .stroke(Color.primary.opacity(0.5), style: StrokeStyle(lineWidth: 0.5, dash: [3, 5], dashPhase: 0))
+        .stroke(Color.primary.opacity(0.5), style: StrokeStyle(lineWidth: 0.5, dash: [3, 5], dashPhase: 2))
     }
     private var yAxisDividers: some View {
         VStack {
@@ -146,11 +147,11 @@ extension ChartView {
             Rectangle()
                 .frame(height: 0.5)
         }
-        .foregroundColor(Color.primary.opacity(0.5))
+        .foregroundColor(Color.primary.opacity(0.4))
     }
     private func goalLine(geo: GeometryProxy) -> some View {
         Path { path in
-            let yPosition = (1 - (CGFloat(goal) / CGFloat(maxY))) * geo.size.height
+            let yPosition = (1 - (CGFloat(activity.goal) / CGFloat(maxY))) * geo.size.height
             
             path.move(to: CGPoint(x: 0, y: yPosition))
             path.addLine(to: CGPoint(x: geo.size.width, y: yPosition))
@@ -188,6 +189,40 @@ extension ChartView {
         }
         .frame(height: geoHeight)
         .offset(y: -(geoHeight / 12))
+    }
+    private var chartDetails: some View {
+        HStack(spacing: 0) {
+            HStack(spacing: 6) {
+                Rectangle()
+                    .fill(.blue)
+                    .frame(width: 12, height: 6)
+                Text("Goal")
+            }
+            Spacer(minLength: 0)
+            HStack(spacing: 6) {
+                Rectangle()
+                    .fill(.green)
+                    .frame(width: 12, height: 6)
+                Text("High Av.")
+            }
+            Spacer(minLength: 0)
+            HStack(spacing: 6) {
+                Rectangle()
+                    .fill(.orange)
+                    .frame(width: 12, height: 6)
+                Text("Med. Av.")
+            }
+            Spacer(minLength: 0)
+            HStack(spacing: 6) {
+                Rectangle()
+                    .fill(.red)
+                    .frame(width: 12, height: 6)
+                Text("Low Av.")
+            }
+        }
+        .frame(width: geoWidth > 0 ? geoWidth - 18 : 0, alignment: .trailing)
+        .padding(.leading, geoWidth / 18)
+        .padding(.top, -5)
     }
 }
 
@@ -233,6 +268,8 @@ extension ChartView {
         let maxValue = valuesOfWeek.max() ?? 0
         let total = valuesOfWeek.reduce(0, +)
         let numberOfValues = valuesOfWeek.count
+        
+        let goal = activity.goal
         
         maxY = maxValue > goal ? maxValue : goal
         average = numberOfValues > 0 ? total / numberOfValues : 0

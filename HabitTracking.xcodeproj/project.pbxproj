@@ -21,6 +21,7 @@
 		818A093227D94EF8003558FC /* ChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 818A093127D94EF8003558FC /* ChartView.swift */; };
 		818A093427DBA4F7003558FC /* tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 818A093327DBA4F7003558FC /* tests.swift */; };
 		818A093627DC27A8003558FC /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 818A093527DC27A8003558FC /* Date.swift */; };
+		818A093827DEB5F3003558FC /* TimeSettingCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 818A093727DEB5F3003558FC /* TimeSettingCard.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +40,7 @@
 		818A093127D94EF8003558FC /* ChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartView.swift; sourceTree = "<group>"; };
 		818A093327DBA4F7003558FC /* tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tests.swift; sourceTree = "<group>"; };
 		818A093527DC27A8003558FC /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
+		818A093727DEB5F3003558FC /* TimeSettingCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSettingCard.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -147,6 +149,7 @@
 			children = (
 				818A092C27D8FF1A003558FC /* DetailView.swift */,
 				818A093127D94EF8003558FC /* ChartView.swift */,
+				818A093727DEB5F3003558FC /* TimeSettingCard.swift */,
 				818A093327DBA4F7003558FC /* tests.swift */,
 			);
 			path = Views;
@@ -236,6 +239,7 @@
 				818A091D27D7FAD7003558FC /* ActivitiesModel.swift in Sources */,
 				818A093227D94EF8003558FC /* ChartView.swift in Sources */,
 				818A090F27D7F8F0003558FC /* ActivitiesListView.swift in Sources */,
+				818A093827DEB5F3003558FC /* TimeSettingCard.swift in Sources */,
 				818A092627D80B06003558FC /* IconPickerView.swift in Sources */,
 				818A092427D7FDA2003558FC /* AddActivityView.swift in Sources */,
 				818A093627DC27A8003558FC /* Date.swift in Sources */,

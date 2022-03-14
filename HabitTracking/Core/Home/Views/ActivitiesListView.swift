@@ -34,8 +34,9 @@ struct ActivitiesListView: View {
                     addButton
                 }
             }
-            .fullScreenCover(isPresented: $showAddActivity) {
+            .sheet(isPresented: $showAddActivity) {
                 AddActivityView(vm: vm)
+                    .interactiveDismissDisabled(true)
             }
         }
     }

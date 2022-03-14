@@ -11,10 +11,11 @@ struct ActivityRow: View {
     let activity: Activity
     
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: 10) {
             Image(systemName: activity.iconName)
                 .font(.system(size: 40, weight: .light, design: .default))
                 .foregroundColor(activity.iconColor)
+                .frame(width: 60)
             
             VStack(alignment: .leading, spacing: 3) {
                 Text(activity.title)
