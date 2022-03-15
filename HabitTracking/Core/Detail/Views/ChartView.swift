@@ -9,15 +9,15 @@ import SwiftUI
 
 struct ChartView: View {
     let activity: Activity
-    let todayNumber: Int
-    var datesOfWeek = [Date]()
-    var weekdays = [String]()
+    let currentWeek: [Date]
     
-    @State private var dataOfWeek = [String: Int]()
+    var currentWeekData = [Date: Int]()
+    var todayIndex = 0
     
     @State private var maxY = 0
     @State private var chartColor = Color.primary
     @State private var animateChart = false
+    
     @State private var geoWidth: CGFloat = 0
     @State private var geoHeight: CGFloat = 230
     
@@ -48,17 +48,30 @@ struct ChartView: View {
     init(activity: Activity, average: Binding<Int>) {
         self.activity = activity
         self._average = average
-        todayNumber = Calendar.current.dateComponents([.day], from: Date.now).day ?? 0
         
-        let firstDayChart = Calendar.current.date(byAdding: .day, value: -6, to: Date.now.startOfDay()) ?? Date.now
+        currentWeek = Date.now.week
+        print("[😀] current week: \(currentWeek)")
         
-        for i in 0..<7 {
-            datesOfWeek.append(Calendar.current.date(byAdding: .day, value: i, to: firstDayChart) ?? Date.now)
+        currentWeek.indices.forEach { index in
+            // find the days of week that match with activity data
+            let data = activity.data.filter { $0.key.isSameDay(as: currentWeek[index])}
+            
+            if let date = data.keys.first {
+                currentWeekData[date] = activity.data[date]
+            } else {
+                // Check if this date is grater than the older date
+                if let olderDate = activity.data.keys.min(), currentWeek[index] > olderDate && currentWeek[index] < Date.now {
+                    currentWeekData[currentWeek[index]] = 0
+                }
+            }
+            
+            // find today index in current week
+            if Date.now.isSameDay(as: currentWeek[index]) {
+                todayIndex = index
+            }
         }
-        print("[😀] dates of week initializacion: \(datesOfWeek)")
-        for date in datesOfWeek {
-            weekdays.append(date.formatted(.dateTime.weekday()))
-        }
+        print("[😀] Current week data: \(currentWeekData)")
+        print("[😀] Today index: \(todayIndex)")
     }
 }
 
@@ -66,7 +79,7 @@ struct ChartView_Previews: PreviewProvider {
     static var previews: some View {
         ChartView(activity: dev.activities[1], average: .constant(50))
             .preferredColorScheme(.dark)
-.previewInterfaceOrientation(.portrait)
+            .previewInterfaceOrientation(.portrait)
     }
 }
 
@@ -74,42 +87,36 @@ extension ChartView {
     private var chartView: some View {
         GeometryReader { geo in
             Path { path in
-                let firstDataDate = activity.data.keys.min() ?? Date.now
-                let firstDataDay = Calendar.current.dateComponents([.day], from: firstDataDate).day ?? 0
-                
-                let firstChartDay = Calendar.current.dateComponents([.day], from: datesOfWeek.first ?? Date.now).day ?? 0
-                
-                print("first data day: \(firstDataDay)")
-                print("first date day: \(firstChartDay)")
-                
-                for index in weekdays.indices {
-                    let yValue = dataOfWeek[weekdays[index], default: 0]
+                for index in currentWeek.indices {
                     
-                    let xPosition = (geo.size.width / CGFloat(weekdays.count - 1)) * CGFloat(index)
+                    // find the value corresponding to the same day
+                    let date = currentWeekData.filter({ $0.key.isSameDay(as: currentWeek[index]) }).keys.first
+                    
+                    let tomorrow = Date.now.addingTimeInterval(24*60*60)
+                    
+                    let yValue = currentWeekData[date ?? tomorrow, default: 0]
+                    
+                    let xPosition = (geo.size.width / CGFloat(currentWeek.count - 1)) * CGFloat(index)
                     
                     let yPosition = (1 - CGFloat(yValue) / CGFloat(maxY)) * geo.size.height
-                    
-                    let chartDay = Calendar.current.dateComponents([.day], from: datesOfWeek[index]).day ?? 0
-                    
-                    if chartDay == firstDataDay || firstChartDay > firstDataDay {
+                                        
+                    if date == currentWeekData.keys.sorted().first {
                         path.move(to: CGPoint(x: xPosition, y: yPosition))
                     }
-                    if chartDay >= firstDataDay && chartDay <= todayNumber {
+                    if date != nil {
                         path.addLine(to: CGPoint(x: xPosition, y: yPosition))
                     }
                 }
-                print("days of week: \(weekdays)")
-                print("data of week: \(dataOfWeek)")
             }
             .trim(from: 0, to: animateChart ? 1.0 : 0.0)
             .stroke(chartColor,
                     style: .init(
-                        lineWidth: dataOfWeek.count > 1 ? 2.5 : 5,
+                        lineWidth: currentWeekData.count == 1 && Date.now.isSameDay(as: currentWeekData.keys.first!) ? 5 : 2.5,
                         lineCap: .round,
                         lineJoin: .round)
             )
-            .shadow(color: chartColor.opacity(0.8), radius: 10, x: 0, y: 5)
-            .shadow(color: chartColor.opacity(0.3), radius: 10, x: 0, y: 5)
+            .shadow(color: chartColor.opacity(0.8), radius: 10, x: 0, y: 3)
+            .shadow(color: chartColor.opacity(0.3), radius: 10, x: 0, y: 3)
             .onAppear {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                     geoWidth = geo.size.width
@@ -125,8 +132,8 @@ extension ChartView {
     }
     private func xAxisDividers(geo: GeometryProxy) -> some View {
         Path { path in
-            for index in weekdays.indices {
-                let xPosition = (geo.size.width / CGFloat(weekdays.count - 1)) * CGFloat(index)
+            for index in currentWeek.indices {
+                let xPosition = (geo.size.width / CGFloat(currentWeek.count - 1)) * CGFloat(index)
                 path.move(to: CGPoint(x: xPosition, y: geo.size.height))
                 path.addLine(to: CGPoint(x: xPosition, y: 0))
             }
@@ -136,18 +143,24 @@ extension ChartView {
     private var yAxisDividers: some View {
         VStack {
             Rectangle()
+                .fill(Color.primary.opacity(0.4))
                 .frame(height: 0.5)
             Spacer()
+            
             Rectangle()
+                .fill(Color.primary.opacity(0.4))
                 .frame(height: 0.5)
             Spacer()
+            
             Rectangle()
+                .fill(Color.primary.opacity(0.4))
                 .frame(height: 0.5)
             Spacer()
+            
             Rectangle()
+                .fill(Color.primary.opacity(0.4))
                 .frame(height: 0.5)
         }
-        .foregroundColor(Color.primary.opacity(0.4))
     }
     private func goalLine(geo: GeometryProxy) -> some View {
         Path { path in
@@ -159,13 +172,10 @@ extension ChartView {
         .stroke(.blue, style: StrokeStyle(lineWidth: 1, lineCap: .round))
     }
     private var xAxisLabels: some View {
-        HStack(spacing: 0) {
-            ForEach(weekdays, id: \.self) {
-                Text($0)
-                    .frame(width: (geoWidth / 9))
-                if $0 != weekdays.last {
-                    Spacer(minLength: 0)
-                }
+        HStack {
+            ForEach(currentWeek, id: \.self) {
+                Text($0.weekdayString)
+                    .frame(maxWidth: .infinity)
             }
         }
         .frame(width: geoWidth + (geoWidth / 18))
@@ -174,17 +184,14 @@ extension ChartView {
         VStack(alignment: .leading, spacing: 0) {
             Text("\(maxY)")
                 .frame(height: geoHeight / 6)
-            
             Spacer(minLength: 0)
             
             Text("\(maxY * 2 / 3)")
                 .frame(height: geoHeight / 6)
-            
             Spacer(minLength: 0)
             
             Text("\(maxY / 3)")
                 .frame(height: geoHeight / 6)
-            
             Spacer(minLength: 0)
         }
         .frame(height: geoHeight)
@@ -229,52 +236,19 @@ extension ChartView {
 // MARK: - Functions
 extension ChartView {
     private func setInitialValues() {
-        let data = activity.data.filter { $0.key >= datesOfWeek.first ?? Date.now }
-        
-        // Create two arrays, one with the dates sorted and other with its values
-        var datesOfWeekFromData = data.map({ $0.key }).sorted()
-        
-        if datesOfWeekFromData.count > 0 {
-            print("dates of week from data: \(datesOfWeekFromData)")
-            
-            var lastDayOfWeekFromData = Calendar.current.dateComponents([.day], from: datesOfWeekFromData.last ?? Date.now).day ?? 0
-            
-            while todayNumber > lastDayOfWeekFromData {
-                datesOfWeekFromData.append(Calendar.current.date(byAdding: .day, value: 1, to: datesOfWeekFromData.last ?? Date.now) ?? Date.now)
-               
-                lastDayOfWeekFromData = Calendar.current.dateComponents([.day], from: datesOfWeekFromData.last ?? Date.now).day ?? 0
-            }
-            print("dates of week from data until today: \(datesOfWeekFromData)")
-        }
-        
-        var valuesOfWeek = [Int]()
-        for date in datesOfWeekFromData {
-            valuesOfWeek.append(data[date, default: 0])
-        }
-        
-        // Convert dates sorted to its respective weekday string
-        var weekdaysFromData = [String]()
-        for date in datesOfWeekFromData {
-            weekdaysFromData.append(date.formatted(.dateTime.weekday()))
-        }
-        
-        // Mix weekdays and values to fill dataOfWeek
-        for index in weekdaysFromData.indices {
-            dataOfWeek[weekdaysFromData[index]] = valuesOfWeek[index]
-        }
-        print("data of week: \(dataOfWeek)")
-        
         // Calculate average
-        let maxValue = valuesOfWeek.max() ?? 0
-        let total = valuesOfWeek.reduce(0, +)
-        let numberOfValues = valuesOfWeek.count
+        let values = currentWeekData.map({ $0.value })
+        let total = values.reduce(0, +)
+        let numberOfValues = currentWeekData.count
         
-        let goal = activity.goal
-        
-        maxY = maxValue > goal ? maxValue : goal
+        maxY = activity.goal
+        if let maxValue = values.max(), maxValue > maxY {
+            maxY = maxValue
+        }
         average = numberOfValues > 0 ? total / numberOfValues : 0
         
-        let percentageAverage = Double(average) / Double(goal)
+        let percentageAverage = Double(average) / Double(activity.goal)
+        
         if percentageAverage >= 1 {
             chartColor = .green
         } else if percentageAverage > 0.7 {
@@ -283,7 +257,7 @@ extension ChartView {
             chartColor = .red
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            withAnimation(.linear(duration: dataOfWeek.count > 3 ? 1.5: 0.8)) {
+            withAnimation(.linear(duration: currentWeekData.count > 3 ? 1.5: 0.8)) {
                 animateChart = true
             }
         }

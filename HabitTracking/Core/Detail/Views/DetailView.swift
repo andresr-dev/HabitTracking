@@ -31,8 +31,8 @@ struct DetailView: View {
                 Spacer()
             }
             if showTimeSetting {
-                TimeSettingCard(minutesSelected: $minutesSelected, showCard: $showTimeSetting)
-                    .transition(.move(edge: .bottom))
+//                TimeSettingCard(minutesSelected: $minutesSelected, showCard: $showTimeSetting)
+//                    .transition(.move(edge: .bottom))
             }
         }
         .ignoresSafeArea(.container, edges: .bottom)

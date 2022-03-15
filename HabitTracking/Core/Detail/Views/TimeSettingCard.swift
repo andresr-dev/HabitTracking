@@ -8,12 +8,14 @@
 import SwiftUI
 
 struct TimeSettingCard: View {
+    let currentWeek: [Date]
     @Binding var minutesSelected: Int
     @Binding var showCard: Bool
     
     var body: some View {
         VStack {
-            headline
+            //headline
+            weekdays
             Picker("Select value in minutes", selection: $minutesSelected) {
                 ForEach(0..<301) {
                     Text("\($0) min")
@@ -31,20 +33,29 @@ struct TimeSettingCard: View {
 
 struct TimeSettingCard_Previews: PreviewProvider {
     static var previews: some View {
-        TimeSettingCard(minutesSelected: .constant(0), showCard: .constant(false))
+        TimeSettingCard(currentWeek: Date().week, minutesSelected: .constant(0), showCard: .constant(false))
             .preferredColorScheme(.dark)
     }
 }
 
 extension TimeSettingCard {
+    private var weekdays: some View {
+        HStack {
+            ForEach(currentWeek, id: \.self) {
+                Text($0.displayDay)
+                    //.fontWeight(.bold)
+                    .frame(maxWidth: .infinity)
+            }
+        }
+    }
     private var headline: some View {
         HStack {
             Text("OK")
             .font(.headline)
-            .padding(.leading, 5)
             .opacity(0)
             
             Spacer()
+            
             Text("Today's value")
                 .font(.title2.weight(.semibold))
             Spacer()
@@ -56,8 +67,8 @@ extension TimeSettingCard {
             } label: {
                 Text("OK")
                     .font(.headline)
-                    .padding(.trailing, 5)
             }
         }
+        .padding(.horizontal, 5)
     }
 }
