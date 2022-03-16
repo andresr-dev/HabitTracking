@@ -96,6 +96,7 @@ extension AddActivityView {
 
 // MARK: - FUNCTIONS
 extension AddActivityView {
+    
     private func addNewActivity()  {
         let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
         let trimmedDescription = description.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -128,7 +129,7 @@ extension AddActivityView {
             title: trimmedTitle,
             description: trimmedDescription,
             iconName: iconSelected.rawValue,
-            colorSelected: colorSelected,
+            colorSelected: colorSelected.cgColor?.components,
             goal: goal
         )
         dismiss()

@@ -22,7 +22,7 @@ struct DeveloperPreview {
         title: "Learn Piano",
         description: "Study piano for 1 hour daily",
         iconName: ActivityIcon.piano.rawValue,
-        iconColor: .purple,
+        iconColor: [0.0, 0.0, 1.0, 1.0],
         goal: 60,
         data: [
             Date().addingTimeInterval(-6*24*60*60): 50,
@@ -39,7 +39,7 @@ struct DeveloperPreview {
             title: "Walk",
             description: "Walk every day for 1 hour",
             iconName: ActivityIcon.walk.rawValue,
-            iconColor: .green,
+            iconColor: [0.0, 0.0, 1.0, 1.0],
             goal: 120,
             data: [
                 Date.now:45,
@@ -50,7 +50,7 @@ struct DeveloperPreview {
             title: "Learn Piano",
             description: "Study piano for 1 hour daily",
             iconName: ActivityIcon.piano.rawValue,
-            iconColor: .purple,
+            iconColor: [0.0, 0.0, 1.0, 1.0],
             goal: 70,
             data: [
                 Date(): 60,
@@ -66,7 +66,7 @@ struct DeveloperPreview {
             title: "Learn Programing",
             description: "Study programing for 3 hours daily",
             iconName: ActivityIcon.brain.rawValue,
-            iconColor: .orange,
+            iconColor: [0.0, 0.0, 0.0, 1.0],
             goal: 60,
             data: [
                 Date().addingTimeInterval(-4*24*60*60): 60,

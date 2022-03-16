@@ -44,7 +44,6 @@ struct ChartView: View {
 
 struct ChartView_Previews: PreviewProvider {
     static var previews: some View {
-        //ChartView(activity: dev.activities[1], average: .constant(50))
         DetailView(vm: ActivitiesModel(), index: 0)
             .preferredColorScheme(.dark)
             .previewInterfaceOrientation(.portrait)
@@ -142,9 +141,12 @@ extension ChartView {
         .stroke(.blue, style: StrokeStyle(lineWidth: 1, lineCap: .round))
     }
     private var xAxisLabels: some View {
-        HStack {
-            ForEach(currentWeek, id: \.self) {
-                Text($0.weekdayString)
+        HStack(spacing: 0) {
+            ForEach(currentWeek, id: \.self) { weekday in
+                Text(weekday.weekdayString)
+                    .fontWeight(Date.now.isSameDay(as: weekday) ? .bold : .regular)
+                    .foregroundColor(Date.now.isSameDay(as: weekday) ? .primary.opacity(0.9) : .secondary)
+                    .frame(height: 24)
                     .frame(maxWidth: .infinity)
             }
         }

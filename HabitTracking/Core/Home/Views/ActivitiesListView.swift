@@ -25,7 +25,7 @@ struct ActivitiesListView: View {
                 .onDelete(perform: vm.delete)
                 .onMove(perform: vm.move)
             }
-            .navigationTitle("Activities")
+            .navigationTitle("Habits")
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     EditButton()

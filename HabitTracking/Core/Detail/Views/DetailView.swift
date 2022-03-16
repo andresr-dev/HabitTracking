@@ -20,24 +20,8 @@ struct DetailView: View {
     @State private var average = 0
     @State private var showTimeSetting = false
     
-    private var goalAttributed: AttributedString {
-        let goal = vm.activities[index].goal
-        var string = AttributedString("Daily goal: \(goal) min")
+    var (red, green, blue, alpha): (CGFloat, CGFloat, CGFloat, CGFloat) = (0.0, 0.0, 1.0, 1.0)
         
-        if let range = string.range(of: "\(goal)") {
-            string[range].font = Font.title3.weight(.semibold)
-        }
-        return string
-    }
-    
-    private var averageAttributed: AttributedString {
-        var string = AttributedString("Average: \(average) min")
-        if let range = string.range(of: "\(average)") {
-            string[range].font = Font.title3.weight(.semibold)
-        }
-        return string
-    }
-    
     var body: some View {
         ScrollView {
             VStack {
@@ -59,7 +43,7 @@ struct DetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             Image(systemName: vm.activities[index].iconName)
-                .foregroundColor(vm.activities[index].iconColor)
+                .foregroundColor(Color(CGColor(red: red, green: green, blue: blue, alpha: alpha)))
         }
         .sheet(isPresented: $showTimeSetting) {
             NewValueSettingView(
@@ -73,12 +57,47 @@ struct DetailView: View {
             setValues()
         }
     }
+    private var goalAttributed: AttributedString {
+        let goal = vm.activities[index].goal
+        var string = AttributedString("Daily goal: \(goal) min")
+        
+        if let range = string.range(of: "\(goal)") {
+            string[range].font = Font.title3.weight(.semibold)
+        }
+        return string
+    }
+    
+    private var averageAttributed: AttributedString {
+        var string = AttributedString("Average: \(average) min")
+        if let range = string.range(of: "\(average)") {
+            string[range].font = Font.title3.weight(.semibold)
+        }
+        return string
+    }
+    
+    init(vm: ActivitiesModel, index: Int) {
+        self.vm = vm
+        self.index = index
+        
+        if let iconColor = vm.activities[index].iconColor {
+            iconColor.indices.forEach { index in
+                switch index {
+                case 0: red = iconColor[index]
+                case 1: green = iconColor[index]
+                case 2: blue = iconColor[index]
+                case 3: alpha = iconColor[index]
+                default: break
+                }
+            }
+        }
+    }
 }
 
 struct DetailView_Previews: PreviewProvider {
+    
     static var previews: some View {
         NavigationView {
-            DetailView(vm: ActivitiesModel(), index: 2)
+            DetailView(vm: ActivitiesModel(), index: 0)
         }
         .preferredColorScheme(.dark)
     }

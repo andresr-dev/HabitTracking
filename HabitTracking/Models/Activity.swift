@@ -8,17 +8,17 @@
 import Foundation
 import SwiftUI
 
-struct Activity: Identifiable {
-    let id = UUID()
+struct Activity: Identifiable, Codable {
+    var id = UUID()
     let title: String
     let description: String
     let iconName: String
-    let iconColor: Color
+    let iconColor: [CGFloat]?
     let goal: Int
     let data: [Date:Int]
     
     func updateData(withData: [Date: Int]) -> Activity {
-        return Activity(title: title, description: description, iconName: iconName, iconColor: iconColor, goal: goal, data: withData)
+        Activity(title: title, description: description, iconName: iconName, iconColor: iconColor, goal: goal, data: withData)
     }
 }
 

@@ -26,6 +26,9 @@ struct tests: View {
         return string
     }
     
+    let blueColor = UIColor.blue
+    var (hue, saturation, brightness, alpha): (CGFloat, CGFloat, CGFloat, CGFloat) = (0.0, 0.0, 0.0, 0.0)
+    
     var body: some View {
 //        Capsule()
 //        .stroke(
@@ -46,6 +49,8 @@ struct tests: View {
             //.font(.system(size: 20, weight: .light, design: .serif))
             Text(thankYouString)
             Text(attributedString3)
+                //.foregroundColor(Color(cgColo))
+            Text("")
         }
     }
 }

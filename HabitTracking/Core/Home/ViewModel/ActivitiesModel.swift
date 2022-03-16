@@ -9,13 +9,26 @@ import Foundation
 import SwiftUI
 
 final class ActivitiesModel: ObservableObject {
-    @Published var activities = [Activity]()
-        
+    @Published var activities = [Activity]() {
+        didSet { saveToUserDefaults() } }
+    
     init() {
-        
+        // This is needed for the previews
+        //activities = DeveloperPreview.instance.activities
+        if let dataSaved = UserDefaults.standard.data(forKey: "Activities") {
+            if let decodedData = try? JSONDecoder().decode([Activity].self, from: dataSaved) {
+                activities = decodedData
+            }
+        }
     }
     
-    func addNewActivity(title: String, description: String, iconName: String, colorSelected: Color, goal: Int) {
+    func saveToUserDefaults() {
+        if let encodedData = try? JSONEncoder().encode(activities) {
+            UserDefaults.standard.set(encodedData, forKey: "Activities")
+        }
+    }
+    
+    func addNewActivity(title: String, description: String, iconName: String, colorSelected: [CGFloat]?, goal: Int) {
         let newActivity = Activity(
             title: title,
             description: description,
