@@ -9,10 +9,15 @@ import SwiftUI
 
 struct NewValueSettingView: View {
     @Environment(\.dismiss) private var dismiss
-    @Binding var currentWeekData: [Date: Int]
+    @ObservedObject var vm: ActivitiesModel
+    let index: Int
     
     let currentWeek = Date.now.week
-    @State private var daySelected = Date()
+    @Binding var currentWeekData: [Date: Int]
+    
+    @Binding var animateChart: Bool
+    
+    @State private var dateSelected = Date()
     @State private var minutesSelected = 0
     
     var body: some View {
@@ -27,44 +32,48 @@ struct NewValueSettingView: View {
             xButton
         }
         .padding()
+        .onAppear(perform: setMinutesSelected)
     }
 }
 
 struct NewValueSettingView_Previews: PreviewProvider {
     static var previews: some View {
-        NewValueSettingView(currentWeekData: .constant(dev.activities[0].data))
+        NewValueSettingView(vm: ActivitiesModel(), index: 1, currentWeekData: .constant(dev.activities[0].data), animateChart: .constant(false))
             .preferredColorScheme(.dark)
     }
 }
 
 extension NewValueSettingView {
     private var title: some View {
-        Text("Set new value")
+        Text("Current Week")
             .font(.title.weight(.semibold))
-            .padding(.top)
+            .padding(.top, 20)
     }
     private var weekdays: some View {
         HStack {
             ForEach(currentWeek, id: \.self) { date in
                 Text(date.displayDay(
-                    longFormat: daySelected.isSameDay(as: date),
+                    longFormat: dateSelected.isSameDay(as: date),
                     isToday: Date.now.isSameDay(as: date))
                 )
-                    .fontWeight(daySelected.isSameDay(as: date) ? .bold : .regular)
+                    .fontWeight(dateSelected.isSameDay(as: date) ? .bold : .regular)
+                    .foregroundColor(date.day > Date.now.day ? Color.secondary : Color.primary)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, daySelected.isSameDay(as: date) ? 7 : 0)
+                    .padding(.vertical, dateSelected.isSameDay(as: date) ? 7 : 0)
                     .background {
                         Capsule()
                             .fill(.thinMaterial)
                             .environment(\.colorScheme, .light)
-                            .opacity(daySelected.isSameDay(as: date) ? 0.8 : 0)
+                            .opacity(dateSelected.isSameDay(as: date) ? 0.8 : 0)
                     }
-                    .frame(width: daySelected.isSameDay(as: date) ? 140 : nil)
+                    .frame(width: dateSelected.isSameDay(as: date) ? 140 : nil)
                     .onTapGesture {
                         withAnimation {
-                            daySelected = date
+                            dateSelected = date
                         }
+                        setMinutesSelected()
                     }
+                    .disabled(date.day > Date.now.day)
             }
         }
     }
@@ -101,6 +110,19 @@ extension NewValueSettingView {
 // MARK: - FUNCTIONS
 extension NewValueSettingView {
     private func saveButtonPressed() {
+        animateChart = false
+        vm.setNewData(index: index, date: dateSelected, minutes: minutesSelected)
+        dismiss()
+    }
+    private func setMinutesSelected() {
+        let data = vm.activities[index].data
         
+        let dateFound = data.keys.filter {$0.isSameDay(as: dateSelected)}
+        
+        if let dateFound = dateFound.first {
+            minutesSelected = data[dateFound, default: 0]
+        } else {
+            minutesSelected = 0
+        }
     }
 }

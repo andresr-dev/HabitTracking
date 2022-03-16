@@ -12,9 +12,12 @@ struct HabitTrackingApp: App {
     
     init() {
         let appearance = UINavigationBarAppearance()
-        appearance.backgroundColor = UIColor.clear
+        appearance.backgroundColor = UIColor.secondarySystemBackground
         
         UINavigationBar.appearance().compactAppearance = appearance
+        //UINavigationBar.appearance().scrollEdgeAppearance = appearance
+        UINavigationBar.appearance().standardAppearance = appearance
+        UINavigationBar.appearance().compactScrollEdgeAppearance = appearance
     }
     
     var body: some Scene {

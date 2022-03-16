@@ -29,6 +29,7 @@ struct ActivitiesListView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     EditButton()
+                        .font(.headline)
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     addButton
@@ -54,7 +55,7 @@ extension ActivitiesListView {
             showAddActivity = true
         } label: {
             Image(systemName: "plus")
-                .font(.title3)
+                .font(.title3.weight(.medium))
         }
     }
 }

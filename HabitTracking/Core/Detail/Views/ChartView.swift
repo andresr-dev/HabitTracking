@@ -16,7 +16,7 @@ struct ChartView: View {
     let maxY: Int
     let chartColor: Color
     
-    @State private var animateChart = false
+    @Binding var animateChart: Bool
     
     @State private var geoWidth: CGFloat = 0
     @State private var geoHeight: CGFloat = 230
@@ -39,7 +39,6 @@ struct ChartView: View {
         }
         .font(.callout)
         .foregroundColor(.secondary)
-        .onAppear(perform: setInitialValues)
     }
 }
 
@@ -109,7 +108,7 @@ extension ChartView {
                 path.addLine(to: CGPoint(x: xPosition, y: 0))
             }
         }
-        .stroke(Color.primary.opacity(0.5), style: StrokeStyle(lineWidth: 0.5, dash: [3, 5], dashPhase: 2))
+        .stroke(Color.primary.opacity(0.5), style: StrokeStyle(lineWidth: 0.5, dash: [3, 5], dashPhase: 5))
     }
     private var yAxisDividers: some View {
         VStack {
@@ -200,20 +199,5 @@ extension ChartView {
         }
         .frame(width: geoWidth > 0 ? geoWidth - 18 : 0, alignment: .trailing)
         .padding(.leading, geoWidth / 18)
-        .padding(.top, -5)
-    }
-}
-
-// MARK: - Functions
-extension ChartView {
-    private func setInitialValues() {
-        
-        
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            withAnimation(.linear(duration: currentWeekData.count > 3 ? 1.5: 0.8)) {
-                animateChart = true
-            }
-        }
     }
 }

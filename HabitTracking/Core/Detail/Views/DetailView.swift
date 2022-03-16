@@ -14,28 +14,47 @@ struct DetailView: View {
     let currentWeek = Date.now.week
     @State private var currentWeekData = [Date: Int]()
     @State private var chartColor = Color.primary
+    @State private var animateChart = false
     
     @State private var maxY = 0
     @State private var average = 0
     @State private var showTimeSetting = false
     
+    private var goalAttributed: AttributedString {
+        let goal = vm.activities[index].goal
+        var string = AttributedString("Daily goal: \(goal) min")
+        
+        if let range = string.range(of: "\(goal)") {
+            string[range].font = Font.title3.weight(.semibold)
+        }
+        return string
+    }
+    
     private var averageAttributed: AttributedString {
         var string = AttributedString("Average: \(average) min")
-        let range = string.range(of: "\(average)")!
-        string[range].font = Font.title3.weight(.semibold)
+        if let range = string.range(of: "\(average)") {
+            string[range].font = Font.title3.weight(.semibold)
+        }
         return string
     }
     
     var body: some View {
-        VStack {
-            texts
-            ChartView(activity: vm.activities[index], currentWeekData: currentWeekData, maxY: maxY, chartColor: chartColor)
-                .padding(.trailing, 5)
-                .padding(.bottom, 45)
-            button
-            Spacer()
+        ScrollView {
+            VStack {
+                texts
+                ChartView(
+                    activity: vm.activities[index],
+                    currentWeekData: currentWeekData,
+                    maxY: maxY,
+                    chartColor: chartColor,
+                    animateChart: $animateChart
+                )
+                    .padding(.trailing, 5)
+                    .padding(.bottom, 35)
+                button
+                Spacer()
+            }
         }
-        .ignoresSafeArea(.container, edges: .bottom)
         .navigationTitle(vm.activities[index].title)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -43,7 +62,15 @@ struct DetailView: View {
                 .foregroundColor(vm.activities[index].iconColor)
         }
         .sheet(isPresented: $showTimeSetting) {
-            NewValueSettingView(currentWeekData: $currentWeekData)
+            NewValueSettingView(
+                vm: vm,
+                index: index,
+                currentWeekData: $currentWeekData,
+                animateChart: $animateChart)
+        }
+        .onAppear(perform: setValues)
+        .onChange(of: vm.activities[index].data) { _ in
+            setValues()
         }
     }
 }
@@ -51,7 +78,7 @@ struct DetailView: View {
 struct DetailView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            DetailView(vm: ActivitiesModel(), index: 1)
+            DetailView(vm: ActivitiesModel(), index: 2)
         }
         .preferredColorScheme(.dark)
     }
@@ -64,40 +91,50 @@ extension DetailView {
                 .font(.headline)
             
             Text(vm.activities[index].description)
-                .font(.callout)
                 .padding(.bottom, 10)
             
-            Text(averageAttributed)
-                .font(.callout)
+            Text("Current Week:")
+                .font(.headline)
+            
+            HStack {
+                Text("\(goalAttributed),")
+                Text(averageAttributed)
+            }
         }
+        .font(.callout)
         .padding()
+        .padding(.bottom, 5)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
     private var button: some View {
         Button("Set new value") {
             showTimeSetting = true
         }
-        .font(.title3.weight(.medium))
+        .font(.title3.weight(.regular))
     }
 }
 
 // MARK: - FUNCTIONS
 extension DetailView {
-    private func setInitialValues() {
+    private func setValues() {
         // Initilize currentWeekData
-        currentWeek.indices.forEach { currentWeekIndex in
-            // find the days of week that match with activity data
-            let data = vm.activities[index].data.filter { $0.key.isSameDay(as: currentWeek[currentWeekIndex])}
+        let data = vm.activities[index].data
+        
+        currentWeek.forEach { weekday in
+            let dateFound = data.filter {$0.key.isSameDay(as: weekday)}
             
-            if let date = data.keys.first {
-                currentWeekData[date] = vm.activities[index].data[date]
+            if let date = dateFound.keys.first {
+                // This weekday is already in data
+                currentWeekData[date] = data[date]
             } else {
-                // Check if this date is grater than the older date
-                if let olderDate = vm.activities[index].data.keys.min(),
-                    currentWeek[currentWeekIndex].day > olderDate.day,
-                    let newestDate = vm.activities[index].data.keys.max(),
-                    currentWeek[currentWeekIndex].day < newestDate.day {
-                    currentWeekData[currentWeek[currentWeekIndex]] = 0
+                // This weekday is not in data yet
+                let olderDate = vm.activities[index].data.keys.min()
+                
+                if let olderDate = olderDate,
+                   weekday.day > olderDate.day,
+                   weekday.day <= Date.now.day {
+                    
+                    currentWeekData[weekday] = 0
                 }
             }
         }
@@ -117,12 +154,17 @@ extension DetailView {
         
         let percentageAverage = Double(average) / Double(goal)
         
-        if percentageAverage >= 1 {
+        if percentageAverage > 0.9 {
             chartColor = .green
-        } else if percentageAverage > 0.7 {
+        } else if percentageAverage > 0.6 {
             chartColor = .orange
         } else {
             chartColor = .red
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            withAnimation(.linear(duration: currentWeek.count > 3 ? 1.5 : 0.75)) {
+                animateChart = true
+            }
         }
     }
 }

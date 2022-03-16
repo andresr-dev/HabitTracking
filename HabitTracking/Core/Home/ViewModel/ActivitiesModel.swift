@@ -12,7 +12,7 @@ final class ActivitiesModel: ObservableObject {
     @Published var activities = [Activity]()
         
     init() {
-        activities = DeveloperPreview.instance.activities
+        
     }
     
     func addNewActivity(title: String, description: String, iconName: String, colorSelected: Color, goal: Int) {
@@ -34,7 +34,19 @@ final class ActivitiesModel: ObservableObject {
     func move(fromOffsets: IndexSet, toOffset: Int) {
         activities.move(fromOffsets: fromOffsets, toOffset: toOffset)
     }
-    func updateCurrentWeekData(index: Int, with data: [Date: Int]) {
+    func setNewData(index: Int, date: Date, minutes: Int) {
+        
+        var data = activities[index].data
+        // Detect if this day already exits in the array
+        let dateFound = activities[index].data.keys.filter { $0.isSameDay(as: date) }
+        
+        if let dateFound = dateFound.first {
+            // We are updating an existing date
+            data[dateFound] = minutes
+        } else {
+            // This is a new date
+            data[date] = minutes
+        }
         let activityUpdated = activities[index].updateData(withData: data)
         activities[index] = activityUpdated
     }
