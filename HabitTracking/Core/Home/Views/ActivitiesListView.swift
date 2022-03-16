@@ -55,7 +55,7 @@ extension ActivitiesListView {
             showAddActivity = true
         } label: {
             Image(systemName: "plus")
-                .font(.title3.weight(.medium))
+                .font(.headline)
         }
     }
 }

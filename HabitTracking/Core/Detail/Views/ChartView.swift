@@ -171,35 +171,37 @@ extension ChartView {
     }
     private var chartDetails: some View {
         HStack(spacing: 0) {
-            HStack(spacing: 6) {
+            HStack(spacing: 4) {
                 Rectangle()
                     .fill(.blue)
                     .frame(width: 12, height: 6)
                 Text("Goal")
             }
             Spacer(minLength: 0)
-            HStack(spacing: 6) {
+            
+            HStack(spacing: 4) {
                 Rectangle()
                     .fill(.green)
                     .frame(width: 12, height: 6)
                 Text("High Av.")
             }
             Spacer(minLength: 0)
-            HStack(spacing: 6) {
+            
+            HStack(spacing: 4) {
                 Rectangle()
                     .fill(.orange)
                     .frame(width: 12, height: 6)
                 Text("Med. Av.")
             }
             Spacer(minLength: 0)
-            HStack(spacing: 6) {
+            
+            HStack(spacing: 4) {
                 Rectangle()
                     .fill(.red)
                     .frame(width: 12, height: 6)
                 Text("Low Av.")
             }
         }
-        .frame(width: geoWidth > 0 ? geoWidth - 18 : 0, alignment: .trailing)
-        .padding(.leading, geoWidth / 18)
+        .padding(.horizontal)
     }
 }
