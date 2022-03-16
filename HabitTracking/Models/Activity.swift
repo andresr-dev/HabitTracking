@@ -16,6 +16,10 @@ struct Activity: Identifiable {
     let iconColor: Color
     let goal: Int
     let data: [Date:Int]
+    
+    func updateData(withData: [Date: Int]) -> Activity {
+        return Activity(title: title, description: description, iconName: iconName, iconColor: iconColor, goal: goal, data: withData)
+    }
 }
 
 enum ActivityIcon: String, CaseIterable {

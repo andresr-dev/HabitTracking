@@ -14,11 +14,11 @@ struct ActivitiesListView: View {
     var body: some View {
         NavigationView {
             List {
-                ForEach(vm.activities) { activity in
+                ForEach(vm.activities.indices, id: \.self) { index in
                     NavigationLink {
-                        DetailView(activity: activity)
+                        DetailView(vm: vm, index: index)
                     } label: {
-                        ActivityRow(activity: activity)
+                        ActivityRow(activity: vm.activities[index])
                     }
                     .listRowInsets(.init(top: 12, leading: 15, bottom: 12, trailing: 12))
                 }

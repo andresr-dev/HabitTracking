@@ -9,20 +9,18 @@ import SwiftUI
 
 struct ChartView: View {
     let activity: Activity
-    let currentWeek: [Date]
     
-    var currentWeekData = [Date: Int]()
-    var todayIndex = 0
+    let currentWeekData: [Date: Int]
+    let currentWeek = Date.now.week
     
-    @State private var maxY = 0
-    @State private var chartColor = Color.primary
+    let maxY: Int
+    let chartColor: Color
+    
     @State private var animateChart = false
     
     @State private var geoWidth: CGFloat = 0
     @State private var geoHeight: CGFloat = 230
-    
-    @Binding var average: Int
-    
+        
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
@@ -41,43 +39,14 @@ struct ChartView: View {
         }
         .font(.callout)
         .foregroundColor(.secondary)
-        .onAppear {
-            setInitialValues()
-        }
-    }
-    init(activity: Activity, average: Binding<Int>) {
-        self.activity = activity
-        self._average = average
-        
-        currentWeek = Date.now.week
-        print("[😀] current week: \(currentWeek)")
-        
-        currentWeek.indices.forEach { index in
-            // find the days of week that match with activity data
-            let data = activity.data.filter { $0.key.isSameDay(as: currentWeek[index])}
-            
-            if let date = data.keys.first {
-                currentWeekData[date] = activity.data[date]
-            } else {
-                // Check if this date is grater than the older date
-                if let olderDate = activity.data.keys.min(), currentWeek[index] > olderDate && currentWeek[index] < Date.now {
-                    currentWeekData[currentWeek[index]] = 0
-                }
-            }
-            
-            // find today index in current week
-            if Date.now.isSameDay(as: currentWeek[index]) {
-                todayIndex = index
-            }
-        }
-        print("[😀] Current week data: \(currentWeekData)")
-        print("[😀] Today index: \(todayIndex)")
+        .onAppear(perform: setInitialValues)
     }
 }
 
 struct ChartView_Previews: PreviewProvider {
     static var previews: some View {
-        ChartView(activity: dev.activities[1], average: .constant(50))
+        //ChartView(activity: dev.activities[1], average: .constant(50))
+        DetailView(vm: ActivitiesModel(), index: 0)
             .preferredColorScheme(.dark)
             .previewInterfaceOrientation(.portrait)
     }
@@ -92,9 +61,11 @@ extension ChartView {
                     // find the value corresponding to the same day
                     let date = currentWeekData.filter({ $0.key.isSameDay(as: currentWeek[index]) }).keys.first
                     
-                    let tomorrow = Date.now.addingTimeInterval(24*60*60)
+                    var yValue = 0
                     
-                    let yValue = currentWeekData[date ?? tomorrow, default: 0]
+                    if let date = date {
+                        yValue = currentWeekData[date, default: 0]
+                    }
                     
                     let xPosition = (geo.size.width / CGFloat(currentWeek.count - 1)) * CGFloat(index)
                     
@@ -133,7 +104,7 @@ extension ChartView {
     private func xAxisDividers(geo: GeometryProxy) -> some View {
         Path { path in
             for index in currentWeek.indices {
-                let xPosition = (geo.size.width / CGFloat(currentWeek.count - 1)) * CGFloat(index)
+                let xPosition = (geo.size.width / CGFloat(6)) * CGFloat(index)
                 path.move(to: CGPoint(x: xPosition, y: geo.size.height))
                 path.addLine(to: CGPoint(x: xPosition, y: 0))
             }
@@ -236,26 +207,9 @@ extension ChartView {
 // MARK: - Functions
 extension ChartView {
     private func setInitialValues() {
-        // Calculate average
-        let values = currentWeekData.map({ $0.value })
-        let total = values.reduce(0, +)
-        let numberOfValues = currentWeekData.count
         
-        maxY = activity.goal
-        if let maxValue = values.max(), maxValue > maxY {
-            maxY = maxValue
-        }
-        average = numberOfValues > 0 ? total / numberOfValues : 0
         
-        let percentageAverage = Double(average) / Double(activity.goal)
         
-        if percentageAverage >= 1 {
-            chartColor = .green
-        } else if percentageAverage > 0.7 {
-            chartColor = .orange
-        } else {
-            chartColor = .red
-        }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             withAnimation(.linear(duration: currentWeekData.count > 3 ? 1.5: 0.8)) {
                 animateChart = true

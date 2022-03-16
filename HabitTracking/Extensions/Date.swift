@@ -15,10 +15,10 @@ extension Date {
         let calendar = Calendar.current
         return calendar.dateComponents([.day], from: self).day ?? 0
     }
-    var displayDay: String {
+    func displayDay(longFormat: Bool, isToday: Bool) -> String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "dd"
-        return formatter.string(from: self)
+        formatter.dateFormat = longFormat ? "dd MMM" : "dd"
+        return (longFormat && isToday ? "Today, " : "") + formatter.string(from: self)
     }
     var week: [Date] {
         let calendar = Calendar.current
@@ -28,6 +28,7 @@ extension Date {
         guard let firstDay = week?.start else {
             return weekDates
         }
+        
         (0..<7).forEach { day in
             if let weekDay = calendar.date(byAdding: .day, value: day, to: firstDay) {
                 weekDates.append(weekDay)

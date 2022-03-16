@@ -10,7 +10,7 @@ import SwiftUI
 
 final class ActivitiesModel: ObservableObject {
     @Published var activities = [Activity]()
-    
+        
     init() {
         activities = DeveloperPreview.instance.activities
     }
@@ -33,5 +33,9 @@ final class ActivitiesModel: ObservableObject {
     }
     func move(fromOffsets: IndexSet, toOffset: Int) {
         activities.move(fromOffsets: fromOffsets, toOffset: toOffset)
+    }
+    func updateCurrentWeekData(index: Int, with data: [Date: Int]) {
+        let activityUpdated = activities[index].updateData(withData: data)
+        activities[index] = activityUpdated
     }
 }
