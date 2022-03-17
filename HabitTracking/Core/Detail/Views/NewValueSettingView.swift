@@ -15,6 +15,10 @@ struct NewValueSettingView: View {
     let currentWeek = Date.now.week
     @Binding var currentWeekData: [Date: Int]
     
+    var today: Date {
+        currentWeek.filter({ $0.isDateToday }).first ?? Date.now
+    }
+    
     @Binding var animateChart: Bool
     
     @State var minutesSelected = 0
@@ -53,29 +57,29 @@ extension NewValueSettingView {
     }
     private var weekdays: some View {
         HStack {
-            ForEach(currentWeek, id: \.self) { date in
-                Text(date.displayDay(
-                    longFormat: dateSelected.isSameDay(as: date),
-                    isToday: Date.now.isSameDay(as: date))
+            ForEach(currentWeek, id: \.self) { weekday in
+                Text(weekday.displayDay(
+                    longFormat: dateSelected.isSameDay(as: weekday),
+                    isToday: today.isSameDay(as: weekday))
                 )
-                    .fontWeight(dateSelected.isSameDay(as: date) ? .bold : .regular)
-                    .foregroundColor(date.day > Date.now.day ? Color.secondary : Color.primary)
+                    .fontWeight(dateSelected.isSameDay(as: weekday) ? .bold : .regular)
+                    .foregroundColor(weekday.day > today.day ? Color.secondary.opacity(0.5) : Color.primary)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, dateSelected.isSameDay(as: date) ? 7 : 0)
+                    .padding(.vertical, dateSelected.isSameDay(as: weekday) ? 7 : 0)
                     .background {
                         Capsule()
                             .fill(.thinMaterial)
                             .environment(\.colorScheme, .light)
-                            .opacity(dateSelected.isSameDay(as: date) ? 0.8 : 0)
+                            .opacity(dateSelected.isSameDay(as: weekday) ? 0.8 : 0)
                     }
-                    .frame(width: dateSelected.isSameDay(as: date) ? 140 : nil)
+                    .frame(width: dateSelected.isSameDay(as: weekday) ? 140 : nil)
                     .onTapGesture {
                         withAnimation {
-                            dateSelected = date
+                            dateSelected = weekday
                         }
                         setMinutesSelected()
                     }
-                    .disabled(date.day > Date.now.day)
+                    .disabled(weekday.day > Date.now.day)
             }
         }
     }

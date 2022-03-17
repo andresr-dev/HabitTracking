@@ -30,7 +30,7 @@ struct AddActivityView: View {
                 iconSelection
                 goalField
             }
-            .navigationTitle("New Activity")
+            .navigationTitle("Add Habit")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
