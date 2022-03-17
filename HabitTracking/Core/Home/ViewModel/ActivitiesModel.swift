@@ -14,7 +14,7 @@ final class ActivitiesModel: ObservableObject {
     
     init() {
         // This is needed for the previews
-        activities = DeveloperPreview.instance.activities
+        //activities = DeveloperPreview.instance.activities
         if let dataSaved = UserDefaults.standard.data(forKey: "Activities") {
             if let decodedData = try? JSONDecoder().decode([Activity].self, from: dataSaved) {
                 activities = decodedData
@@ -28,7 +28,7 @@ final class ActivitiesModel: ObservableObject {
         }
     }
     
-    func addNewActivity(title: String, description: String, iconName: String, colorSelected: [CGFloat]?, goal: Int) {
+    func addNewActivity(title: String, description: String, iconName: String, colorSelected: [CGFloat], goal: Int) {
         let newActivity = Activity(
             title: title,
             description: description,
@@ -51,7 +51,7 @@ final class ActivitiesModel: ObservableObject {
         
         var data = activities[index].data
         // Detect if this day already exits in the array
-        let dateFound = activities[index].data.keys.filter { $0.isSameDay(as: date) }
+        let dateFound = data.keys.filter { $0.isSameDay(as: date) }
         
         if let dateFound = dateFound.first {
             // We are updating an existing date
@@ -61,6 +61,7 @@ final class ActivitiesModel: ObservableObject {
             data[date] = minutes
         }
         let activityUpdated = activities[index].updateData(withData: data)
+        
         activities[index] = activityUpdated
     }
 }

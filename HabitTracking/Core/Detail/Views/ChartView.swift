@@ -10,15 +10,15 @@ import SwiftUI
 struct ChartView: View {
     let activity: Activity
     
-    let currentWeekData: [Date: Int]
+    @Binding var currentWeekData: [Date: Int]
     let currentWeek = Date.now.week
     
-    let maxY: Int
-    let chartColor: Color
+    @Binding var maxY: Int
+    @Binding var chartColor: Color
     
     @Binding var animateChart: Bool
     
-    @State private var geoWidth: CGFloat = 0
+    @State private var geoWidth: CGFloat = UIScreen.main.bounds.width
     @State private var geoHeight: CGFloat = 230
         
     var body: some View {

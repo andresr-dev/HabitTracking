@@ -41,9 +41,9 @@ struct DetailView: View {
                 texts
                 ChartView(
                     activity: vm.activities[index],
-                    currentWeekData: currentWeekData,
-                    maxY: maxY,
-                    chartColor: chartColor,
+                    currentWeekData: $currentWeekData,
+                    maxY: $maxY,
+                    chartColor: $chartColor,
                     animateChart: $animateChart
                 )
                     .padding(.trailing, 5)
@@ -92,15 +92,15 @@ struct DetailView: View {
         self.vm = vm
         self.index = index
         
-        if let iconColor = vm.activities[index].iconColor {
-            iconColor.indices.forEach { index in
-                switch index {
-                case 0: red = iconColor[index]
-                case 1: green = iconColor[index]
-                case 2: blue = iconColor[index]
-                case 3: alpha = iconColor[index]
-                default: break
-                }
+        let iconColor = vm.activities[index].iconColor
+        
+        iconColor.indices.forEach { index in
+            switch index {
+            case 0: red = iconColor[index]
+            case 1: green = iconColor[index]
+            case 2: blue = iconColor[index]
+            case 3: alpha = iconColor[index]
+            default: break
             }
         }
         print("[😀] Detail view initialized for \(vm.activities[index].title)")

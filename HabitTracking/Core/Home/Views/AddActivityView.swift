@@ -129,7 +129,7 @@ extension AddActivityView {
             title: trimmedTitle,
             description: trimmedDescription,
             iconName: iconSelected.rawValue,
-            colorSelected: colorSelected.cgColor?.components,
+            colorSelected: colorSelected.cgColor?.components ?? [0.5, 0.5, 0.5, 1.0],
             goal: goal
         )
         dismiss()

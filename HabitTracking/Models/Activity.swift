@@ -13,7 +13,7 @@ struct Activity: Identifiable, Codable {
     let title: String
     let description: String
     let iconName: String
-    let iconColor: [CGFloat]?
+    let iconColor: [CGFloat]
     let goal: Int
     let data: [Date:Int]
     

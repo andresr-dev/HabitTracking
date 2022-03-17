@@ -37,15 +37,16 @@ struct ActivityRow: View {
     
     init(activity: Activity) {
         self.activity = activity
-        if let iconColor = activity.iconColor {
-            iconColor.indices.forEach { index in
-                switch index {
-                case 0: red = iconColor[index]
-                case 1: green = iconColor[index]
-                case 2: blue = iconColor[index]
-                case 3: alpha = iconColor[index]
-                default: break
-                }
+        
+        let iconColor = activity.iconColor
+        
+        iconColor.indices.forEach { index in
+            switch index {
+            case 0: red = iconColor[index]
+            case 1: green = iconColor[index]
+            case 2: blue = iconColor[index]
+            case 3: alpha = iconColor[index]
+            default: break
             }
         }
     }

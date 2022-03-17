@@ -17,8 +17,8 @@ struct NewValueSettingView: View {
     
     @Binding var animateChart: Bool
     
-    @State private var dateSelected = Date()
-    @State private var minutesSelected = 0
+    @State var minutesSelected = 0
+    @State var dateSelected = Date()
     
     var body: some View {
         VStack(spacing: 50) {
@@ -32,7 +32,9 @@ struct NewValueSettingView: View {
             xButton
         }
         .padding()
-        .onAppear(perform: setMinutesSelected)
+        .onAppear {
+            setMinutesSelected(initilizeDateSelected: true)
+        }
     }
 }
 
@@ -79,8 +81,9 @@ extension NewValueSettingView {
     }
     private var minutesPicker: some View {
         Picker("Select value in minutes", selection: $minutesSelected) {
-            ForEach(0..<301) {
-                Text("\($0) min")
+            ForEach(0..<301) { minute in
+                Text("\(minute) min")
+                    .tag(minute)
             }
         }
         .pickerStyle(.wheel)
@@ -111,10 +114,20 @@ extension NewValueSettingView {
 extension NewValueSettingView {
     private func saveButtonPressed() {
         animateChart = false
-        vm.setNewData(index: index, date: dateSelected, minutes: minutesSelected)
-        dismiss()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            vm.setNewData(index: index, date: dateSelected, minutes: minutesSelected)
+            dismiss()
+        }
     }
-    private func setMinutesSelected() {
+    private func setMinutesSelected(initilizeDateSelected: Bool = false) {
+        
+        if initilizeDateSelected {
+            if let date = currentWeek.filter({ $0.isDateToday }).first {
+                dateSelected = date
+            }
+        }
+        
+        // Read the minutes so the wheel shows the minutes related with the date
         let data = vm.activities[index].data
         
         let dateFound = data.keys.filter {$0.isSameDay(as: dateSelected)}
