@@ -16,7 +16,7 @@ struct AddActivityView: View {
     @State private var goal: Int?
     
     @State private var iconSelected = ActivityIcon.learn
-    @State private var colorSelected = Color.primary
+    @State private var colorSelected = Color(CGColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 1.0))
     
     @State private var showAlert = false
     @State private var alertTitle = ""
