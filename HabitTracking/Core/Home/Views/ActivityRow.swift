@@ -27,7 +27,12 @@ struct ActivityRow: View {
                     .foregroundColor(.secondary)
                     .lineLimit(1)
             }
+            Spacer()
+            Image(systemName: "chevron.right")
+                .font(.callout.weight(.semibold))
+                .foregroundColor(.secondary.opacity(0.8))
         }
+        .contentShape(Rectangle())
     }
     
     init(activity: Activity) {

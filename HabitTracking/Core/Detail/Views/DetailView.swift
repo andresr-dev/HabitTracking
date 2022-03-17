@@ -7,6 +7,19 @@
 
 import SwiftUI
 
+struct DetailViewLoading: View {
+    @ObservedObject var vm: ActivitiesModel
+    @Binding var index: Int?
+    
+    var body: some View {
+        ZStack {
+            if let index = index {
+                DetailView(vm: vm, index: index)
+            }
+        }
+    }
+}
+
 struct DetailView: View {
     @ObservedObject var vm: ActivitiesModel
     let index: Int
@@ -90,6 +103,7 @@ struct DetailView: View {
                 }
             }
         }
+        print("[😀] Detail view initialized for \(vm.activities[index].title)")
     }
 }
 

@@ -14,7 +14,7 @@ final class ActivitiesModel: ObservableObject {
     
     init() {
         // This is needed for the previews
-        //activities = DeveloperPreview.instance.activities
+        activities = DeveloperPreview.instance.activities
         if let dataSaved = UserDefaults.standard.data(forKey: "Activities") {
             if let decodedData = try? JSONDecoder().decode([Activity].self, from: dataSaved) {
                 activities = decodedData
